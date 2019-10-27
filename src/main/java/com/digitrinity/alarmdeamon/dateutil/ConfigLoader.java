@@ -144,6 +144,7 @@ public class ConfigLoader {
 	
 	public static final String TRACK_SERVER_PACKAGE = "com.DigitalTrinity.servers";
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static ArrayList getDeviceStartWithList() {
 		
 		ArrayList deviceStartWithListArr=new ArrayList();

@@ -48,6 +48,7 @@ import java.util.Vector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+@SuppressWarnings("rawtypes")
 public class DateTime implements Comparable, Cloneable
 {
     // ------------------------------------------------------------------------

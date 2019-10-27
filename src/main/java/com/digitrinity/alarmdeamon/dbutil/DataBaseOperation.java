@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import com.digitrinity.alarmdeamon.model.CloseAlarmData;
 import com.digitrinity.alarmdeamon.model.OpenAlarmData;
 import com.digitrinity.alarmdeamon.util.MailUtil;
+import com.digitrinity.alarmdeamon.util.SendCloseMail;
 
 public class DataBaseOperation {
 
@@ -142,7 +143,7 @@ public class DataBaseOperation {
 							
 							/*After Sending Mail Update alrEscalatedLevel in Trans_AlarmRecords*/
 							
-							updateAlrEscalatedLevel(alarmData.getSiteId(),alarmData.getAlrPinNumber(),alarmData.getAlrTTEscalatedLevel()+1,alarmData.getAlrOpenTime());
+							updateAlrEscalatedLevel(alarmData.getSiteId(),alarmData.getAlrPinNumber(),alarmData.getAlrTTEscalatedLevel()+1,alarmData.getAlrOpenTime(),smTechEmpid);
 						}
 					}
 				}
@@ -169,7 +170,7 @@ public class DataBaseOperation {
 
 	}
 
-	private void updateAlrEscalatedLevel(int siteId, String alrPinNumber, int escalationLevel, long alrOpenTime) throws Exception {
+	private void updateAlrEscalatedLevel(int siteId, String alrPinNumber, int escalationLevel, long alrOpenTime, String smTechEmpid) throws Exception {
 
 		Connection connObj = null;
 		PreparedStatement pstmtObj = null;
@@ -184,7 +185,7 @@ public class DataBaseOperation {
 			System.out.println("\n=====Making A New Connection Object For Db Transaction=====\n");
 			connObj = dataSource.getConnection();
 			jdbcObj.printDbStatus(); 
-			pstmtObj = connObj.prepareStatement("Update trans_alarmrecords Set alrEscalatedLevel="+escalationLevel+ " where smSiteID="+siteId+"and alrOpenTime= "+alrOpenTime+"");
+			pstmtObj = connObj.prepareStatement("Update trans_alarmrecords Set alrEscalatedLevel="+escalationLevel+ " where smSiteID="+siteId+"and alrOpenTime= "+alrOpenTime+"and alrEscalateMail="+smTechEmpid+"");
 
 			pstmtObj.executeUpdate();
 			connObj.close();
@@ -253,6 +254,9 @@ public class DataBaseOperation {
 		ConnectionPool jdbcObj = new ConnectionPool();
 		DataSource dataSource = jdbcObj.setUpPool();
 		ArrayList<CloseAlarmData> alarmDataList = new ArrayList<CloseAlarmData>();
+		int siteId= 0;
+		String alrPinNumber="";
+		long alrOpenTime=0L;
 
 		try {   
 
@@ -265,23 +269,21 @@ public class DataBaseOperation {
 			pstmtObj = connObj.prepareStatement("Select * from trans_alarmrecords  where alrCloseTime!=0 and alrDemonProcessed=1 and alrIsSentMail=0");
 
 			ResultSet rsObj = pstmtObj.executeQuery();
-			long alrOpenTime;
-			String siteCode;
-			String alrPinNumber;
-			int alrTTEscalatedLevel;
-			int siteId = 0;
-
+			String emailId ="";
+			
 			while(rsObj.next()){
 
-				alrOpenTime = rsObj.getInt("alrOpenTime");
-				siteCode = rsObj.getString("smSiteCode");
-				alrPinNumber = rsObj.getString("alrPinNumber");
-				alrTTEscalatedLevel = rsObj.getInt("alrTTEscalatedLevel");
+				emailId = rsObj.getString("alrEscalateMail");
 				siteId = rsObj.getInt("smSiteID");
-
-				CloseAlarmData closeAlarmData = new CloseAlarmData(alrOpenTime,siteCode,alrPinNumber,alrTTEscalatedLevel,siteId);
+				alrPinNumber = rsObj.getString("alrPinNumber");
+				alrOpenTime = rsObj.getLong("alrOpenTime");
+				
+				CloseAlarmData closeAlarmData = new CloseAlarmData(emailId,siteId,alrPinNumber,alrOpenTime);
 				alarmDataList.add(closeAlarmData);
 			}
+			
+			SendCloseMail sendCloseMail = new SendCloseMail(alarmDataList);
+			sendCloseMail.sendCloseMail(emailId);
 			rsObj.close();
 			connObj.close();
 			pstmtObj.close();
