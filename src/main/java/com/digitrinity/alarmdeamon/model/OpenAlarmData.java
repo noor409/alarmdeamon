@@ -5,6 +5,38 @@ public class OpenAlarmData {
 	
 	private long alrOpenTime;
 
+	private String siteCode;
+	
+	private String mailId;
+	
+	public String getMailId() {
+		return mailId;
+	}
+
+
+	public void setMailId(String mailId) {
+		this.mailId = mailId;
+	}
+
+
+	private String alrPinNumber;
+	
+	private int alrTTEscalatedLevel;
+	
+	private int siteId;
+	
+	private int alrID;
+
+	public int getAlrID() {
+		return alrID;
+	}
+
+
+	public void setAlrID(int alrID) {
+		this.alrID = alrID;
+	}
+
+
 	public long getAlrOpenTime() {
 		return alrOpenTime;
 	}
@@ -23,17 +55,6 @@ public class OpenAlarmData {
 	public void setSiteCode(String siteCode) {
 		this.siteCode = siteCode;
 	}
-
-
-	private String siteCode;
-	
-	private String alrPinNumber;
-	
-	private int alrTTEscalatedLevel;
-	
-	private int siteId;
-	
-	
 	public int getSiteId() {
 		return siteId;
 	}
@@ -64,10 +85,13 @@ public class OpenAlarmData {
 	}
 
 
-	public OpenAlarmData(long alrOpenTime, String siteCode, String alrPinNumber, int alrTTEscalatedLevel, int siteId) {
+	public OpenAlarmData(long alrOpenTime, String siteCode, String alrPinNumber, int alrTTEscalatedLevel, int siteId, int alrID, String mailId) {
 		super();
 		this.alrOpenTime = alrOpenTime;
 		this.siteCode = siteCode;
 		this.alrPinNumber = alrPinNumber;
+		this.siteId = siteId;
+		this.alrID = alrID;
+		this.mailId = mailId;
 	}
 }

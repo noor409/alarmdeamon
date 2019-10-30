@@ -6,6 +6,18 @@ public class CloseAlarmData {
 	
 	private int siteId;
 	
+	private int alrId;
+	
+	private int ttEscalationLevel;
+	
+	public int getAlrId() {
+		return alrId;
+	}
+
+	public void setAlrId(int alrId) {
+		this.alrId = alrId;
+	}
+
 	String alrPinNumber;
 	
 	long alrOpenTime;
@@ -34,9 +46,14 @@ public class CloseAlarmData {
 		this.alrOpenTime = alrOpenTime;
 	}
 
-	public CloseAlarmData(String escaltedMail, int siteId, String alrPinNumber, long alrOpenTime) {
+	public CloseAlarmData(String escaltedMail, int siteId, String alrPinNumber, long alrOpenTime, int alrId, int ttEscalationLevel) {
 		super();
 		this.escaltedMail = escaltedMail;
+		this.siteId = siteId;
+		this.alrPinNumber = alrPinNumber;
+		this.alrOpenTime = alrOpenTime;
+		this.alrId = alrId;
+		this.ttEscalationLevel = ttEscalationLevel;
 	}
 
 	public String getEscaltedMail() {

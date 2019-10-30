@@ -1,6 +1,12 @@
 package com.digitrinity.alarmdeamon.dbutil;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import javax.sql.DataSource;
+
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
@@ -10,17 +16,20 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 public class ConnectionPool {
 
 	// JDBC Driver Name & Database URL
-	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-	static final String JDBC_DB_URL = "jdbc:mysql://db.digitrinity.com/ymp_rms?useSSL=false";
+	 String JDBC_DRIVER;  
+	 String JDBC_DB_URL;
 
 	// JDBC Database Credentials
-	static final String JDBC_USER = "rmsprod";
-	static final String JDBC_PASS = "vr*@DT@2019";
+	 String JDBC_USER;
+	 String JDBC_PASS;
 
 	private static GenericObjectPool gPool = null;
 
 	@SuppressWarnings("unused")
 	public DataSource setUpPool() throws Exception {
+		
+		loadProperties();
+		
 		Class.forName(JDBC_DRIVER);
 
 		// Creates an Instance of GenericObjectPool That Holds Our Pool of Connections Object!
@@ -41,6 +50,18 @@ public class ConnectionPool {
 			
 			return new PoolingDataSource(gPool);
 		}
+	}
+
+	private void loadProperties() throws IOException {
+
+		InputStream input = new FileInputStream("alarmdeamon/alarmdeamon.properties");
+		Properties prop = new Properties();
+		// load a properties file
+		prop.load(input);
+		JDBC_DRIVER = prop.getProperty("db.drive");
+		JDBC_DB_URL = prop.getProperty("db.url");
+		JDBC_USER = prop.getProperty("db.username");
+		JDBC_PASS = prop.getProperty("db.password");
 	}
 
 	public GenericObjectPool getConnectionPool() {

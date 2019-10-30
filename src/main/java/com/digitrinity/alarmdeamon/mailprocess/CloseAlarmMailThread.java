@@ -1,13 +1,19 @@
 package com.digitrinity.alarmdeamon.mailprocess;
 
+import java.sql.Connection;
+
 import com.digitrinity.alarmdeamon.dbutil.DataBaseOperation;
 
-public class CloseAlarmMailThread implements Runnable {
+public class CloseAlarmMailThread extends Thread {
 
 	public void run() {
 
 		try {
-			fetchCloseAlarmRecord();
+			while(true) {
+				
+				System.out.println("close alarm thread");
+				fetchCloseAlarmRecord();
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -16,8 +22,9 @@ public class CloseAlarmMailThread implements Runnable {
 
 	private void fetchCloseAlarmRecord() throws Exception {
 
+		System.out.println("fetchCloseAlarmRecord");
 		DataBaseOperation dbOp = new DataBaseOperation();
 		dbOp.fetchCloseAlarmRecord();
-		
+
 	}
 }
